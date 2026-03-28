@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SCNC1111 - Fluorine 2</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #f8f4ea 0%, #e8dfd1 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e2f 0%, #1e2a20 100%);
+            color: #fef7e0;
+            padding: 1.8rem 2rem;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 2rem;
+        }
+        .header p {
+            margin: 0.5rem 0 0;
+            opacity: 0.9;
+        }
+        .main-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            padding: 2rem;
+        }
+        .panel {
+            flex: 1;
+            min-width: 320px;
+            background: #fffdf9;
+            border-radius: 28px;
+            padding: 1.5rem;
+            border: 1px solid #ede3d0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        .panel h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #3b2a1f;
+            margin-top: 0;
+            margin-bottom: 1.2rem;
+            border-left: 4px solid #b97f44;
+            padding-left: 12px;
+        }
+        .panel h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #5a3e2b;
+            margin: 1rem 0 0.8rem 0;
+        }
+        .control-group {
+            margin-bottom: 1.2rem;
+        }
+        label {
+            font-weight: 600;
+            color: #5a3e2b;
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 40px;
+            border: 1px solid #ddd0bd;
+            background: white;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            outline: none;
+        }
+        select:focus, input:focus {
+            border-color: #b97f44;
+            box-shadow: 0 0 0 2px rgba(185, 127, 68, 0.2);
+        }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+        }
+        input[type="range"] {
+            padding: 0;
+            height: 5px;
+            border-radius: 10px;
+        }
+        .weight-value {
+            font-weight: bold;
+            color: #b97f44;
+        }
+        .result-area {
+            background: #fef3e4;
+            border-radius: 24px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+        }
+        .drink-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .drink-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2c3e2f;
+        }
+        .badge {
+            display: inline-block;
+            background: #e6d5bd;
+            border-radius: 30px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #3b2a1f;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+        .nutrition-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            background: #faf5eb;
+            padding: 12px;
+            border-radius: 16px;
+            margin: 12px 0;
+            font-size: 0.85rem;
+        }
+        .comparison {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #ede3d0;
+        }
+        .improvement {
+            color: #2c7a4d;
+            font-weight: bold;
+        }
+        .chart-container {
+            margin-top: 1rem;
+            height: 250px;
+        }
+        button {
+            background: #b97f44;
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            width: 100%;
+        }
+        button:hover {
+            background: #9b6234;
+            transform: translateY(-1px);
+        }
+        .info-text {
+            font-size: 0.75rem;
+            color: #7b6b58;
+            margin-top: 8px;
+            text-align: center;
+        }
+        @media (max-width: 900px) {
+            .main-grid { flex-direction: column; }
+            .panel { min-width: auto; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <div class="header">
+            <h1> Build a Beverage</h1>
+            <p> Personalize Starbucks Order to Achieve Nutritional Goals</p>
+        </div>
+        <div class="main-grid">
+            <!-- LEFT PANEL: User Inputs -->
+            <div class="panel">
+                <h2>👤 Your Profile</h2>
+                <div class="control-group">
+                    <label>Gender</label>
+                    <select id="gender">
+                        <option value="female">Female</option>
+                        <option value="male">Male</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Age (years)</label>
+                    <input type="number" id="age" value="30" min="15" max="100">
+                </div>
+                <div class="control-group">
+                    <label>Weight (kg)</label>
+                    <input type="number" id="weight" value="70" min="30" max="200" step="1">
+                </div>
+                <div class="control-group">
+                    <label>Height (cm)</label>
+                    <input type="number" id="height" value="170" min="100" max="250" step="1">
+                </div>
+                <div class="control-group">
+                    <label>Activity Level</label>
+                    <select id="activity">
+                        <option value="1.2">Sedentary (little or no exercise)</option>
+                        <option value="1.375">Lightly active (1-3 days/week)</option>
+                        <option value="1.55" selected>Moderately active (3-5 days/week)</option>
+                        <option value="1.725">Very active (6-7 days/week)</option>
+                        <option value="1.9">Extra active (athlete/physical job)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>🍽️ Meal Percentage (what % of daily calories should this drink be?)</label>
+                    <input type="range" id="mealPercent" min="0.05" max="0.4" step="0.01" value="0.2">
+                    <div class="slider-label">
+                        <span>5% (snack)</span>
+                        <span id="mealPercentDisplay" class="weight-value">20%</span>
+                        <span>40% (meal replacement)</span>
+                    </div>
+                </div>
+				<!-- Goal-Based Preset Selector -->
+				<div class="control-group">
+					<label>🎯 Health Goal Preset</label>
+					<select id="healthGoal">
+						<option value="normal">Normal / Maintenance</option>
+						<option value="weightLoss">⚡ Weight Loss</option>
+						<option value="muscleGain">💪 Muscle Gain</option>
+						<option value="diabetes">🩺 Diabetes Management</option>
+				</select>
+		<div class="info-text" style="margin-top: 5px;">
+        Automatically adjusts nutritional targets based on your goal
+				</div>
+			</div>
+                <h2>🥤 Your Current Drink</h2>
+                <div class="control-group">
+                    <label>Size</label>
+                    <select id="baseSize">
+                        <option value="Tall">Tall (12 oz)</option>
+                        <option value="Grande" selected>Grande (16 oz)</option>
+                        <option value="Venti">Venti (20 oz)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Milk</label>
+                    <select id="baseMilk">
+                        <option value="NF">Nonfat</option>
+                        <option value="2%" selected>2%</option>
+                        <option value="WH">Whole</option>
+                        <option value="AL">Almond</option>
+                        <option value="OT">Oat</option>
+                        <option value="SY">Soy</option>
+                        <option value="CC">Coconut</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Syrup pumps (0-12)</label>
+                    <input type="number" id="basePumps" min="0" max="12" value="3">
+                </div>
+                <div class="control-group">
+                    <label>Whipped cream</label>
+                    <select id="baseWhip">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Food item (protein box/pastry)</label>
+                    <select id="baseFood">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- MIDDLE PANEL: Weights -->
+            <div class="panel">
+                <h2>⚖️ Your Health Priorities</h2>
+                <p style="font-size:0.8rem; color:#7b6b58;">Adjust these based on what matters most to you</p>
+                <div class="control-group">
+                    <div class="slider-label"><span>🔥 Calories</span><span id="wCalVal" class="weight-value">0.40</span></div>
+                    <input type="range" id="wCal" min="0" max="1" step="0.01" value="0.4">
+                </div>
+                <div class="control-group">
+                    <div class="slider-label"><span>🍬 Sugar</span><span id="wSugarVal" class="weight-value">0.40</span></div>
+                    <input type="range" id="wSugar" min="0" max="1" step="0.01" value="0.4">
+                </div>
+                <div class="control-group">
+                    <div class="slider-label"><span>💪 Protein</span><span id="wProteinVal" class="weight-value">0.10</span></div>
+                    <input type="range" id="wProtein" min="0" max="1" step="0.01" value="0.1">
+                </div>
+                <div class="control-group">
+                    <div class="slider-label"><span>🧈 Fat</span><span id="wFatVal" class="weight-value">0.10</span></div>
+                    <input type="range" id="wFat" min="0" max="1" step="0.01" value="0.1">
+                </div>
+                <div class="info-text">Weights automatically normalize to sum to 1</div>
+
+				<h2>🎯 Taste Preservation</h2>
+				<p style="font-size:0.8rem; color:#7b6b58;">How important is it to keep the drink similar to your current one?</p>
+			<div class="control-group">
+    <label>⚙️ Health vs. Taste Balance (β)</label>
+    <input type="range" id="beta" min="0" max="1" step="0.05" value="0.3">
+    <div class="slider-label">
+        <span>🥗 Prioritize Health</span>
+        <span id="betaVal" class="weight-value">0.30</span>
+        <span>😋 Prioritize Taste</span>
+    </div>
+    <div class="info-text">Higher β = keep drink more similar to your original (all attributes equally important)</div>
+	</div>
+                <button id="optimizeBtn">✨ Find Healthier Alternative ✨</button>
+            </div>
+
+            <!-- RIGHT PANEL: Results -->
+            <div class="panel">
+                <h2>📊 Your Personalized Recommendations</h2>
+                <div id="resultsArea">
+                    <div style="text-align:center; padding: 40px; color:#8f7a64;">
+                        Set your preferences and click "Find Healthier Alternative"
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==================== DATA ====================
+    const sizes = ['Tall', 'Grande', 'Venti'];
+    const baseWith2PercentMilk = {
+        'Tall': [100, 9, 6, 4],
+        'Grande': [130, 12, 8, 5],
+        'Venti': [160, 15, 10, 6]
+    };
+    const milkModifier = {
+        'NF': [-20, -1, 0, -4],
+        '2%': [0, 0, 0, 0],
+        'WH': [20, 0, 0, 4],
+        'AL': [-30, -2, -2, -2],
+        'OT': [10, 1, -1, 1],
+        'SY': [10, 0, 1, 1],
+        'CC': [-20, -1, -2, -2]
+    };
+    const syrupPerPump = [20, 5, 0, 0];
+    const whipAddition = [80, 7, 0, 8];
+    const foodAddition = [70, 2, 12, 2];
+    
+    // Default targets (will be personalized)
+    let drinkTargets = { cal: 250, sugar: 25, protein: 10, fat: 15 };
+    
+    // Generate all possible drinks
+    function getAllDrinks() {
+        const drinks = [];
+        for (const size of sizes) {
+            for (const milk of Object.keys(milkModifier)) {
+                for (let pumps = 0; pumps <= 12; pumps++) {
+                    for (let whip of [0, 1]) {
+                        for (let food of [0, 1]) {
+                            drinks.push({ size, milk, pumps, whip, food });
+                        }
+                    }
+                }
+            }
+        }
+        return drinks;
+    }
+    const allDrinks = getAllDrinks(); // 3*7*13*2*2 = 1092
+    
+    // Compute nutrition
+    function computeNutrition(size, milk, pumps, whip, food) {
+        let base = baseWith2PercentMilk[size].slice();
+        let mod = milkModifier[milk];
+        let nutrition = base.map((val, idx) => val + mod[idx]);
+        nutrition[0] += pumps * syrupPerPump[0];
+        nutrition[1] += pumps * syrupPerPump[1];
+        nutrition[2] += pumps * syrupPerPump[2];
+        nutrition[3] += pumps * syrupPerPump[3];
+        if (whip === 1) {
+            nutrition[0] += whipAddition[0];
+            nutrition[1] += whipAddition[1];
+            nutrition[2] += whipAddition[2];
+            nutrition[3] += whipAddition[3];
+        }
+        if (food === 1) {
+            nutrition[0] += foodAddition[0];
+            nutrition[1] += foodAddition[1];
+            nutrition[2] += foodAddition[2];
+            nutrition[3] += foodAddition[3];
+        }
+        return nutrition;
+    }
+    
+    // Health Deviation Score D(x) - with max(0, ...) for directional penalties
+   function healthScore(nutrition, weights, targets) {
+    let [cal, sugar, protein, fat] = nutrition;
+    // Allow negative values (beneficial deviations)
+    let d_cal = (cal - targets.cal) / targets.cal;
+    let d_sugar = (sugar - targets.sugar) / targets.sugar;
+    let d_protein = (targets.protein - protein) / targets.protein;
+    let d_fat = (fat - targets.fat) / targets.fat;
+    return weights.cal * d_cal + weights.sugar * d_sugar + weights.protein * d_protein + weights.fat * d_fat;
+	}
+    
+    // Simple similarity score - higher = more similar to original
+// All attributes equally weighted (no priorities)
+function similarityScore(drink, baseDrink) {
+    let matches = 0;
+    let totalAttributes = 5; // size, milk, pumps, whip, food
+    
+    // Compare each attribute
+    if (drink.size === baseDrink.size) matches += 1;
+    if (drink.milk === baseDrink.milk) matches += 1;
+    
+    // Sweetness: compare pump counts (normalized to 0-1)
+    let pumpDiff = Math.abs(drink.pumps - baseDrink.pumps);
+    let sweetnessScore = 1 - (pumpDiff / 12); // 12 is max pumps
+    matches += Math.max(0, sweetnessScore);
+    
+    if (drink.whip === baseDrink.whip) matches += 1;
+    if (drink.food === baseDrink.food) matches += 1;
+    
+    // Return normalized score between 0 and 1
+    return matches / totalAttributes;
+	}
+    
+   // Combined Objective: Z = (1-β)*D - β*P
+// D = health score (lower = healthier)
+// P = taste similarity (higher = more similar to original)
+// Lower Z = better overall
+function combinedObjective(drink, baseDrink, healthWeights, beta, targets) {
+    const nut = computeNutrition(drink.size, drink.milk, drink.pumps, drink.whip, drink.food);
+    const D = healthScore(nut, healthWeights, targets);
+    const P = similarityScore(drink, baseDrink);
+    
+    // Original equation: Z = (1-β)D - β*P
+    return (1 - beta) * D - beta * P;
+	}
+    
+    // BMR Calculation (Mifflin-St Jeor)
+    function calculateBMR(gender, age, weight, height) {
+        if (gender === 'male') {
+            return 10 * weight + 6.25 * height - 5 * age + 5;
+        } else {
+            return 10 * weight + 6.25 * height - 5 * age - 161;
+        }
+    }
+    
+    // Normalize weights to sum to 1
+    function normalizeWeights(w) {
+        let sum = w.cal + w.sugar + w.protein + w.fat;
+        if (sum === 0) return { cal: 0.25, sugar: 0.25, protein: 0.25, fat: 0.25 };
+        return {
+            cal: w.cal / sum,
+            sugar: w.sugar / sum,
+            protein: w.protein / sum,
+            fat: w.fat / sum
+        };
+    }
+    
+// Goal-based target multipliers
+function getGoalMultipliers(goal) {
+    switch(goal) {
+        case 'weightLoss':
+            return { cal: 0.71, sugar: 0.56, fat: 0.5, protein: 0.47 };
+        case 'muscleGain':
+            return { cal: 1.43, sugar: 1.11, fat: 1.5, protein: 2.67 };
+        case 'diabetes':
+            return { cal: 0.57, sugar: 0, fat: 0.5, protein: 0.67 };
+        default: // normal
+            return { cal: 1.0, sugar: 1.0, fat: 1.0, protein: 1.0 };
+    }
+}
+
+// Apply goal multipliers to targets
+function applyGoalMultipliers(baseTargets, goal) {
+    const multipliers = getGoalMultipliers(goal);
+    return {
+        cal: baseTargets.cal * multipliers.cal,
+        sugar: baseTargets.sugar * multipliers.sugar,
+        protein: baseTargets.protein * multipliers.protein,
+        fat: baseTargets.fat * multipliers.fat
+    };
+}    
+		function findBestDrink(baseDrink, healthWeights, beta, targets) {
+    let bestDrink = null;
+    let bestZ = Infinity;
+    for (const drink of allDrinks) {
+        const z = combinedObjective(drink, baseDrink, healthWeights, beta, targets);
+        if (z < bestZ) {
+            bestZ = z;
+            bestDrink = drink;
+        }
+    }
+    return { bestDrink, bestZ };
+}
+    
+    // Milk names mapping
+    const milkNames = {
+        'NF': 'Nonfat', '2%': '2%', 'WH': 'Whole', 'AL': 'Almond', 'OT': 'Oat', 'SY': 'Soy', 'CC': 'Coconut'
+    };
+    
+    let chart = null;
+    
+function updateRecommendation() {
+    // Get user inputs
+    const gender = document.getElementById('gender').value;
+    const age = parseFloat(document.getElementById('age').value);
+    const weight = parseFloat(document.getElementById('weight').value);
+    const height = parseFloat(document.getElementById('height').value);
+    const activity = parseFloat(document.getElementById('activity').value);
+    const mealPercent = parseFloat(document.getElementById('mealPercent').value);
+    const healthGoal = document.getElementById('healthGoal').value; // NEW: get goal
+    
+    // Calculate daily calories and drink target
+    const bmr = calculateBMR(gender, age, weight, height);
+    const dailyCalories = bmr * activity;
+    let drinkCalorieTarget = dailyCalories * mealPercent;
+    
+    // Set base targets (standard recommendations)
+    let baseTargets = {
+        cal: drinkCalorieTarget,
+        sugar: 25,
+        protein: 10,
+        fat: 15
+    };
+    
+    // NEW: Apply goal multipliers
+    const targets = applyGoalMultipliers(baseTargets, healthGoal);
+    
+    // Display current goal info for transparency
+    const goalMultipliers = getGoalMultipliers(healthGoal);
+    let goalDescription = '';
+    switch(healthGoal) {
+        case 'weightLoss':
+            goalDescription = '⚡ Weight Loss Mode: Reduced calories, sugar, and fat. Higher protein priority.';
+            break;
+        case 'muscleGain':
+            goalDescription = '💪 Muscle Gain Mode: Increased calories and protein for muscle building.';
+            break;
+        case 'diabetes':
+            goalDescription = '🩺 Diabetes Management: Zero sugar target, reduced calories and fat.';
+            break;
+        default:
+            goalDescription = '📊 Normal Mode: Standard nutritional targets.';
+    }
+    
+    // Get health weights
+    let healthWeightsRaw = {
+        cal: parseFloat(document.getElementById('wCal').value),
+        sugar: parseFloat(document.getElementById('wSugar').value),
+        protein: parseFloat(document.getElementById('wProtein').value),
+        fat: parseFloat(document.getElementById('wFat').value)
+    };
+    const healthWeights = normalizeWeights(healthWeightsRaw);
+		
+		const beta = parseFloat(document.getElementById('beta').value);
+    
+    // Get base drink
+    const baseDrink = {
+        size: document.getElementById('baseSize').value,
+        milk: document.getElementById('baseMilk').value,
+        pumps: parseInt(document.getElementById('basePumps').value),
+        whip: parseInt(document.getElementById('baseWhip').value),
+        food: parseInt(document.getElementById('baseFood').value)
+    };
+    
+    // Find optimal drink
+const { bestDrink, bestZ } = findBestDrink(baseDrink, healthWeights, beta, targets);
+    
+    // Compute nutrition for base and optimal
+    const baseNut = computeNutrition(baseDrink.size, baseDrink.milk, baseDrink.pumps, baseDrink.whip, baseDrink.food);
+    const optNut = computeNutrition(bestDrink.size, bestDrink.milk, bestDrink.pumps, bestDrink.whip, bestDrink.food);
+    
+    // Compute health scores
+    const baseHealth = healthScore(baseNut, healthWeights, targets);
+    const optHealth = healthScore(optNut, healthWeights, targets);
+    const healthImprovement = ((baseHealth - optHealth) / (baseHealth + 0.001) * 100).toFixed(1);
+    
+    // Display results with goal info
+    const resultsHtml = `
+        <div class="result-area">
+            <div class="info-text" style="background: #e8dfd1; padding: 8px; border-radius: 12px; margin-bottom: 12px;">
+                ${goalDescription}
+            </div>
+            <div class="drink-card">
+                <div class="drink-name">🔄 Your Current Drink</div>
+                <div><span class="badge">${baseDrink.size}</span> <span class="badge">${milkNames[baseDrink.milk]}</span> <span class="badge">${baseDrink.pumps} pump${baseDrink.pumps !== 1 ? 's' : ''}</span> <span class="badge">${baseDrink.whip ? 'Whip' : 'No whip'}</span> <span class="badge">${baseDrink.food ? 'Food' : 'No food'}</span></div>
+                <div class="nutrition-grid">
+                    <div>🔥 ${Math.round(baseNut[0])} / ${Math.round(targets.cal)} kcal</div>
+                    <div>🍬 ${baseNut[1]} / ${targets.sugar}g sugar</div>
+                    <div>💪 ${baseNut[2]} / ${targets.protein}g protein</div>
+                    <div>🧈 ${baseNut[3]} / ${targets.fat}g fat</div>
+                </div>
+                <div>📊 Health Score: <strong>${baseHealth.toFixed(3)}</strong> (lower is better)</div>
+            </div>
+            
+            <div class="drink-card" style="background: #e8f0e5;">
+                <div class="drink-name">✨ Recommended Healthier Alternative</div>
+                <div><span class="badge">${bestDrink.size}</span> <span class="badge">${milkNames[bestDrink.milk]}</span> <span class="badge">${bestDrink.pumps} pump${bestDrink.pumps !== 1 ? 's' : ''}</span> <span class="badge">${bestDrink.whip ? 'Whip' : 'No whip'}</span> <span class="badge">${bestDrink.food ? 'Food' : 'No food'}</span></div>
+                <div class="nutrition-grid">
+                    <div>🔥 ${Math.round(optNut[0])} / ${Math.round(targets.cal)} kcal</div>
+                    <div>🍬 ${optNut[1]} / ${targets.sugar}g sugar</div>
+                    <div>💪 ${optNut[2]} / ${targets.protein}g protein</div>
+                    <div>🧈 ${optNut[3]} / ${targets.fat}g fat</div>
+                </div>
+                <div>📊 Health Score: <strong>${optHealth.toFixed(3)}</strong> ↓ <span class="improvement">${healthImprovement}% improvement</span></div>
+                <div class="info-text" style="margin-top: 8px;">🎯 Balanced: Health improvement + taste preservation ( β = ${beta})</div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('resultsArea').innerHTML = resultsHtml;
+    
+    // Update chart
+    updateChart(baseNut, optNut, targets);
+    
+    // Update display values
+    document.getElementById('mealPercentDisplay').innerText = Math.round(mealPercent * 100) + '%';
+    document.getElementById('wCalVal').innerText = healthWeights.cal.toFixed(2);
+    document.getElementById('wSugarVal').innerText = healthWeights.sugar.toFixed(2);
+    document.getElementById('wProteinVal').innerText = healthWeights.protein.toFixed(2);
+    document.getElementById('wFatVal').innerText = healthWeights.fat.toFixed(2);
+   
+}
+    
+    function updateChart(baseNut, optNut, targets) {
+        const ctx = document.getElementById('comparisonChart').getContext('2d');
+        const labels = ['Calories (% of target)', 'Sugar (% of target)', 'Protein (% of target)', 'Fat (% of target)'];
+        
+        const basePercentages = [
+            (baseNut[0] / targets.cal) * 100,
+            (baseNut[1] / targets.sugar) * 100,
+            (baseNut[2] / targets.protein) * 100,
+            (baseNut[3] / targets.fat) * 100
+        ];
+        
+        const optPercentages = [
+            (optNut[0] / targets.cal) * 100,
+            (optNut[1] / targets.sugar) * 100,
+            (optNut[2] / targets.protein) * 100,
+            (optNut[3] / targets.fat) * 100
+        ];
+        
+        if (chart) chart.destroy();
+        
+        chart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Your Current Drink',
+                        data: basePercentages,
+                        borderColor: '#b97f44',
+                        backgroundColor: 'rgba(185, 127, 68, 0.2)',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#b97f44'
+                    },
+                    {
+                        label: 'Recommended Drink',
+                        data: optPercentages,
+                        borderColor: '#2c7a4d',
+                        backgroundColor: 'rgba(44, 122, 77, 0.2)',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#2c7a4d'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 200,
+                        title: {
+                            display: true,
+                            text: '% of Healthy Target (lower is better for calories/sugar/fat, higher is better for protein)'
+                        },
+                        ticks: {
+                            stepSize: 50
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.raw.toFixed(1)}% of target`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Event listeners
+    document.getElementById('optimizeBtn').addEventListener('click', updateRecommendation);
+    
+    // Auto-update on slider changes
+    const sliders = ['wCal', 'wSugar', 'wProtein', 'wFat', 'beta', 'mealPercent'];
+    sliders.forEach(id => {
+        document.getElementById(id).addEventListener('input', updateRecommendation);
+    });
+    // Add healthGoal to auto-update on change
+	document.getElementById('healthGoal').addEventListener('change', updateRecommendation);
+    // Initial load
+    updateRecommendation();
+</script>
+</body>
+</html>
